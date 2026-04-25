@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新陳代謝力自測表｜朵朵健康療聊室</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FDF8F3;
+    --blush: #E8C4C4;
+    --lilac: #C4B8D8;
+    --sky: #A8C4D8;
+    --deep-purple: #3D2B5E;
+    --soft-purple: #7B6A9B;
+    --rose: #C4627A;
+    --text: #2C2040;
+    --card-bg: rgba(255,255,255,0.72);
+    --border: rgba(180,160,200,0.3);
+    --shadow: 0 4px 24px rgba(100,80,140,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Watercolor background blobs */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -80px; left: -80px;
+    width: 420px; height: 380px;
+    background: radial-gradient(ellipse at 40% 40%, rgba(200,180,225,0.45) 0%, rgba(168,196,216,0.28) 50%, transparent 75%);
+    border-radius: 60% 40% 55% 45% / 50% 60% 40% 50%;
+    pointer-events: none; z-index: 0;
+    filter: blur(18px);
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -60px; right: -60px;
+    width: 380px; height: 340px;
+    background: radial-gradient(ellipse at 60% 60%, rgba(232,196,196,0.45) 0%, rgba(196,184,216,0.25) 50%, transparent 75%);
+    border-radius: 45% 55% 40% 60% / 60% 40% 55% 45%;
+    pointer-events: none; z-index: 0;
+    filter: blur(20px);
+  }
+
+  .blob-mid {
+    position: fixed;
+    top: 35%; right: -40px;
+    width: 280px; height: 260px;
+    background: radial-gradient(ellipse, rgba(168,196,216,0.35) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none; z-index: 0;
+    filter: blur(22px);
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 36px 20px 60px;
+    position: relative; z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  .header .subtitle {
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--soft-purple);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  .header h1 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: clamp(26px, 6vw, 40px);
+    font-weight: 900;
+    color: var(--deep-purple);
+    line-height: 1.2;
+    letter-spacing: 2px;
+  }
+  .header .desc {
+    margin-top: 12px;
+    font-size: 13.5px;
+    color: var(--soft-purple);
+    line-height: 1.8;
+    max-width: 520px;
+    margin-inline: auto;
+  }
+  .header-divider {
+    width: 60px; height: 3px;
+    background: linear-gradient(90deg, var(--blush), var(--lilac));
+    border-radius: 4px;
+    margin: 16px auto 0;
+  }
+
+  /* Score bar at top */
+  .score-bar {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 18px 24px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    backdrop-filter: blur(8px);
+    box-shadow: var(--shadow);
+    flex-wrap: wrap;
+  }
+  .score-number {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 42px;
+    font-weight: 900;
+    color: var(--deep-purple);
+    line-height: 1;
+    min-width: 56px;
+  }
+  .score-number span {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--soft-purple);
+  }
+  .score-details {
+    flex: 1;
+  }
+  .score-label {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--deep-purple);
+    margin-bottom: 6px;
+  }
+  .progress-track {
+    height: 8px;
+    background: rgba(180,160,200,0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    width: 100%;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--lilac), var(--blush), var(--rose));
+    transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    width: 0%;
+  }
+  .score-badge {
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    transition: all 0.4s ease;
+  }
+  .badge-low { background: rgba(168,196,216,0.25); color: #5a8fa8; border: 1.5px solid rgba(168,196,216,0.5); }
+  .badge-mild { background: rgba(196,184,216,0.3); color: var(--soft-purple); border: 1.5px solid rgba(196,184,216,0.5); }
+  .badge-moderate { background: rgba(232,196,196,0.4); color: #b05070; border: 1.5px solid rgba(232,150,160,0.4); }
+  .badge-high { background: rgba(196,98,122,0.15); color: var(--rose); border: 1.5px solid rgba(196,98,122,0.4); }
+
+  /* Section */
+  .section {
+    margin-bottom: 20px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .section-icon {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--deep-purple);
+    letter-spacing: 1px;
+  }
+  .section-count {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--soft-purple);
+    font-weight: 500;
+  }
+
+  .items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 10px;
+  }
+
+  /* Checkbox item */
+  .check-item {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 13px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: all 0.22s ease;
+    backdrop-filter: blur(6px);
+    user-select: none;
+  }
+  .check-item:hover {
+    border-color: var(--lilac);
+    box-shadow: 0 2px 12px rgba(120,100,160,0.12);
+    transform: translateY(-1px);
+  }
+  .check-item.checked {
+    background: rgba(196,184,216,0.2);
+    border-color: var(--soft-purple);
+    box-shadow: 0 3px 14px rgba(120,100,160,0.15);
+  }
+  .check-item.high-risk.checked {
+    background: rgba(196,98,122,0.1);
+    border-color: var(--rose);
+    box-shadow: 0 3px 14px rgba(196,98,122,0.18);
+  }
+
+  .checkbox-box {
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    border: 2px solid rgba(140,120,180,0.4);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s ease;
+    margin-top: 1px;
+    background: white;
+  }
+  .check-item.checked .checkbox-box {
+    background: var(--soft-purple);
+    border-color: var(--soft-purple);
+  }
+  .check-item.high-risk.checked .checkbox-box {
+    background: var(--rose);
+    border-color: var(--rose);
+  }
+  .checkbox-box::after {
+    content: '';
+    width: 5px; height: 9px;
+    border: 2px solid white;
+    border-top: none; border-left: none;
+    transform: rotate(45deg) translateY(-1px);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+  .check-item.checked .checkbox-box::after { opacity: 1; }
+
+  .item-text {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text);
+    font-weight: 400;
+    flex: 1;
+  }
+  .check-item.checked .item-text {
+    color: var(--deep-purple);
+    font-weight: 500;
+  }
+  .item-weight {
+    font-size: 11px;
+    background: rgba(180,160,200,0.2);
+    color: var(--soft-purple);
+    border-radius: 20px;
+    padding: 2px 8px;
+    white-space: nowrap;
+    align-self: flex-start;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .check-item.high-risk .item-weight {
+    background: rgba(196,98,122,0.1);
+    color: var(--rose);
+  }
+
+  /* High risk section */
+  .section.clinical .section-header .section-icon {
+    background: rgba(196,98,122,0.12);
+  }
+  .section.clinical .section-title { color: #a04060; }
+  .section.clinical .check-item {
+    border-color: rgba(196,120,140,0.25);
+  }
+
+  /* Result panel */
+  .result-panel {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 24px 28px;
+    margin-top: 28px;
+    backdrop-filter: blur(8px);
+    box-shadow: var(--shadow);
+    opacity: 0;
+    transform: translateY(12px);
+    transition: all 0.5s ease;
+  }
+  .result-panel.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .result-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--deep-purple);
+    margin-bottom: 10px;
+  }
+  .result-text {
+    font-size: 13.5px;
+    line-height: 1.9;
+    color: #504060;
+  }
+  .result-text strong { color: var(--rose); }
+
+  .suggestions {
+    margin-top: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .suggestion-tag {
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12.5px;
+    font-weight: 500;
+    background: rgba(196,184,216,0.2);
+    color: var(--soft-purple);
+    border: 1px solid rgba(196,184,216,0.4);
+  }
+
+  .reset-btn {
+    display: block;
+    margin: 24px auto 0;
+    padding: 12px 36px;
+    background: transparent;
+    border: 2px solid var(--lilac);
+    border-radius: 40px;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--soft-purple);
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: all 0.25s ease;
+  }
+  .reset-btn:hover {
+    background: var(--soft-purple);
+    border-color: var(--soft-purple);
+    color: white;
+    transform: scale(1.03);
+  }
+
+  .footer-note {
+    text-align: center;
+    font-size: 11.5px;
+    color: rgba(100,80,130,0.55);
+    margin-top: 32px;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 560px) {
+    .items-grid { grid-template-columns: 1fr; }
+    .score-bar { gap: 12px; }
+    .score-number { font-size: 34px; }
+  }
+</style>
+</head>
+<body>
+<div class="blob-mid"></div>
+
+<div class="container">
+  <div class="header">
+    <div class="subtitle">朵朵健康療聊室</div>
+    <h1>新陳代謝力自測表</h1>
+    <p class="desc">勾選近3個月內符合你的狀況，了解你的代謝風險等級</p>
+    <div class="header-divider"></div>
+  </div>
+
+  <!-- Live score bar -->
+  <div class="score-bar">
+    <div class="score-number" id="scoreNum">0 <span>分</span></div>
+    <div class="score-details">
+      <div class="score-label" id="scoreLabel">尚未開始評估</div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+    <div class="score-badge badge-low" id="scoreBadge">開始勾選</div>
+  </div>
+
+  <!-- Section 1: Energy & Sleep -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(168,196,216,0.2);font-size:16px;">⚡</div>
+      <div class="section-title">能量代謝 × 睡眠</div>
+      <div class="section-count" id="count-energy">0/6</div>
+    </div>
+    <div class="items-grid" data-section="energy">
+      <div class="check-item" data-score="2" data-section="energy" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">容易疲勞、下午特別沒精神，就算睡夠仍感覺累</div>
+        <div class="item-weight">×2</div>
+      </div>
+      <div class="check-item" data-score="3" data-section="energy" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">睡眠障礙、入睡困難或易醒，睡眠品質差</div>
+        <div class="item-weight">×3</div>
+      </div>
+      <div class="check-item" data-score="3" data-section="energy" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">飯後特別想睡、嗜睡感明顯</div>
+        <div class="item-weight">×3</div>
+      </div>
+      <div class="check-item" data-score="3" data-section="energy" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">熬夜（23:00後才入睡）或輪班作息不規律</div>
+        <div class="item-weight">×3</div>
+      </div>
+      <div class="check-item" data-score="2" data-section="energy" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">怕冷、體溫偏低或手腳容易冰冷</div>
+        <div class="item-weight">×2</div>
+      </div>
+      <div class="check-item" data-score="3" data-section="energy" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">常處於高壓、緊繃或焦慮的狀態下</div>
+        <div class="item-weight">×3</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Blood Sugar & Diet -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(232,196,196,0.25);font-size:16px;">🍬</div>
+      <div class="section-title">血糖調控 × 飲食</div>
+      <div class="section-count" id="count-sugar">0/4</div>
+    </div>
+    <div class="items-grid" data-section="sugar">
+      <div class="check-item" data-score="3" data-section="sugar" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">三餐習慣以白飯、麵食、麵包等精緻澱粉為主</div>
+        <div class="item-weight">×3</div>
+      </div>
+      <div class="check-item" data-score="3" data-section="sugar" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">一週吃超過3次的甜食、糕點、餅乾零食或含糖飲料</div>
+        <div class="item-weight">×3</div>
+      </div>
+      <div class="check-item" data-score="3" data-section="sugar" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">節食或努力運動但體重幾乎不動</div>
+        <div class="item-weight">×3</div>
+      </div>
+      <div class="check-item" data-score="2" data-section="sugar" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">三餐不規律、常跳過早餐或間歇性挨餓</div>
+        <div class="item-weight">×2</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Gut & Digestion -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(196,184,216,0.25);font-size:16px;">🌿</div>
+      <div class="section-title">腸道健康 × 消化</div>
+      <div class="section-count" id="count-gut">0/5</div>
+    </div>
+    <div class="items-grid" data-section="gut">
+      <div class="check-item" data-score="3" data-section="gut" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">便秘（3天以上排便一次）或長期腹瀉，兩者交替</div>
+        <div class="item-weight">×3</div>
+      </div>
+      <div class="check-item" data-score="2" data-section="gut" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">飯後腹脹、排氣多、腸胃咕嚕叫</div>
+        <div class="item-weight">×2</div>
+      </div>
+      <div class="check-item" data-score="2" data-section="gut" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">皮膚反覆出疹、鼻過敏或有腸胃過敏史</div>
+        <div class="item-weight">×2</div>
+      </div>
+      <div class="check-item" data-score="2" data-section="gut" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">每天蔬果合計少於6個拳頭大小（約每餐蔬菜未達半盤）</div>
+        <div class="item-weight">×2</div>
+      </div>
+      <div class="check-item" data-score="1" data-section="gut" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">口臭、舌苔厚或口中常有異味</div>
+        <div class="item-weight">×1</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: Movement & Body Composition -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(168,216,196,0.22);font-size:16px;">🏃</div>
+      <div class="section-title">運動習慣 × 體態</div>
+      <div class="section-count" id="count-move">0/5</div>
+    </div>
+    <div class="items-grid" data-section="move">
+      <div class="check-item" data-score="4" data-section="move" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">每天久坐超過6小時</div>
+        <div class="item-weight">×4</div>
+      </div>
+      <div class="check-item" data-score="3" data-section="move" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">每週運動少於2次，或每次少於30分鐘</div>
+        <div class="item-weight">×3</div>
+      </div>
+      <div class="check-item" data-score="2" data-section="move" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">小腹、腰腹脂肪容易堆積，很難消除</div>
+        <div class="item-weight">×2</div>
+      </div>
+      <div class="check-item" data-score="2" data-section="move" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">容易身體水腫、按壓有凹陷感或下肢浮腫</div>
+        <div class="item-weight">×2</div>
+      </div>
+      <div class="check-item" data-score="2" data-section="move" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">肌肉量感覺越來越少，手臂或腿部明顯鬆軟無力</div>
+        <div class="item-weight">×2</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 5: Hormones & Women's Health -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(196,184,216,0.2);font-size:16px;">🌸</div>
+      <div class="section-title">荷爾蒙 × 女性健康</div>
+      <div class="section-count" id="count-hormone">0/3</div>
+    </div>
+    <div class="items-grid" data-section="hormone">
+      <div class="check-item" data-score="3" data-section="hormone" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">經期不規律、量少、延遲超過7天以上</div>
+        <div class="item-weight">×3</div>
+      </div>
+      <div class="check-item" data-score="3" data-section="hormone" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">情緒波動大、易焦慮煩躁，或有明顯經前症候群</div>
+        <div class="item-weight">×3</div>
+      </div>
+      <div class="check-item" data-score="2" data-section="hormone" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">掉髮量增加、指甲易斷、膚色暗沉</div>
+        <div class="item-weight">×2</div>
+      </div>
+    </div>
+    <div style="margin-top:10px; padding:11px 16px; background:rgba(196,184,216,0.13); border-left:3px solid var(--lilac); border-radius:0 10px 10px 0; font-size:12.5px; color:var(--soft-purple); line-height:1.8;">
+      💡 若你同時有<strong>子宮肌瘤、腺肌症、子宮內膜異位或息肉</strong>病史，代謝失衡（尤其是雌激素代謝不良）可能是重要背景因素，建議搭配荷爾蒙完整評估。
+    </div>
+  </div>
+
+  <!-- Section 6: Clinical Indicators (High Risk) -->
+  <div class="section clinical">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(196,98,122,0.12);font-size:15px;">⚠️</div>
+      <div class="section-title" style="color:#a04060;">臨床指標（高權重）</div>
+      <div class="section-count" id="count-clinical">0/7</div>
+    </div>
+    <div class="items-grid" data-section="clinical">
+      <div class="check-item high-risk" data-score="4" data-section="clinical" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">女生腰圍超過80公分 / 男生超過90公分</div>
+        <div class="item-weight">×4</div>
+      </div>
+      <div class="check-item high-risk" data-score="4" data-section="clinical" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">三酸甘油酯偏高（≥150 mg/dL）</div>
+        <div class="item-weight">×4</div>
+      </div>
+      <div class="check-item high-risk" data-score="4" data-section="clinical" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">空腹血糖偏高（≥100 mg/dL）或已確診胰島素阻抗</div>
+        <div class="item-weight">×4</div>
+      </div>
+      <div class="check-item high-risk" data-score="4" data-section="clinical" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">血壓偏高（收縮壓≥130 或舒張壓≥85 mmHg）</div>
+        <div class="item-weight">×4</div>
+      </div>
+      <div class="check-item high-risk" data-score="5" data-section="clinical" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">已確診多囊性卵巢症候群（PCOS）</div>
+        <div class="item-weight">×5</div>
+      </div>
+      <div class="check-item high-risk" data-score="4" data-section="clinical" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">脂肪肝、肝功能指數（ALT/AST）持續偏高</div>
+        <div class="item-weight">×4</div>
+      </div>
+      <div class="check-item high-risk" data-score="4" data-section="clinical" onclick="toggle(this)">
+        <div class="checkbox-box"></div>
+        <div class="item-text">已確診甲狀腺功能低下或橋本氏甲狀腺炎</div>
+        <div class="item-weight">×4</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result panel -->
+  <div class="result-panel" id="resultPanel">
+    <div class="result-title" id="resultTitle"></div>
+    <div class="result-text" id="resultText"></div>
+    <div class="suggestions" id="suggestions"></div>
+  </div>
+
+  <button class="reset-btn" onclick="resetAll()">清除重測</button>
+
+  <div class="footer-note">
+    本測驗僅供健康參考，不代表醫療診斷<br>
+    如有臨床指標異常，建議諮詢醫療專業人員｜朵朵健康療聊室
+  </div>
+</div>
+
+<script>
+const MAX_SCORE = 87;
+const sectionCounts = { energy:0, sugar:0, gut:0, move:0, hormone:0, clinical:0 };
+const sectionTotals = { energy:6, sugar:4, gut:5, move:5, hormone:3, clinical:7 };
+let totalScore = 0;
+
+function toggle(el) {
+  const score = parseInt(el.dataset.score);
+  const section = el.dataset.section;
+  const wasChecked = el.classList.contains('checked');
+
+  if (wasChecked) {
+    el.classList.remove('checked');
+    totalScore -= score;
+    sectionCounts[section]--;
+  } else {
+    el.classList.add('checked');
+    totalScore += score;
+    sectionCounts[section]++;
+  }
+
+  updateScore();
+  updateSectionCounts();
+}
+
+function updateScore() {
+  const pct = Math.min((totalScore / MAX_SCORE) * 100, 100);
+  document.getElementById('scoreNum').innerHTML = `${totalScore} <span>分</span>`;
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  const clinicalCount = sectionCounts['clinical'];
+
+  let label, badgeClass, badgeText;
+  if (totalScore === 0) {
+    label = '尚未開始評估'; badgeClass = 'badge-low'; badgeText = '開始勾選';
+  } else if (clinicalCount >= 2 || totalScore >= 33) {
+    label = '代謝風險偏高，建議諮詢專業並進行檢查'; badgeClass = 'badge-high'; badgeText = '高度警示';
+  } else if (clinicalCount >= 1 || totalScore >= 19) {
+    label = '中度代謝失衡，需積極介入改善'; badgeClass = 'badge-moderate'; badgeText = '中度警示';
+  } else if (totalScore <= 8) {
+    label = '代謝狀態良好，維持現有習慣'; badgeClass = 'badge-low'; badgeText = '代謝良好';
+  } else {
+    label = '輕度代謝壓力，建議調整生活習慣'; badgeClass = 'badge-mild'; badgeText = '輕度風險';
+  }
+
+  document.getElementById('scoreLabel').textContent = label;
+  const badge = document.getElementById('scoreBadge');
+  badge.className = 'score-badge ' + badgeClass;
+  badge.textContent = badgeText;
+
+  updateResult(totalScore, clinicalCount);
+}
+
+function updateSectionCounts() {
+  Object.keys(sectionCounts).forEach(s => {
+    const el = document.getElementById('count-' + s);
+    if (el) el.textContent = sectionCounts[s] + '/' + sectionTotals[s];
+  });
+}
+
+function updateResult(score, clinicalCount) {
+  const panel = document.getElementById('resultPanel');
+  if (score === 0) { panel.classList.remove('visible'); return; }
+
+  panel.classList.add('visible');
+
+  let title, text, tags;
+
+  if (clinicalCount >= 2 || score >= 33) {
+    title = '🚨 代謝風險偏高';
+    text = '你的評分顯示代謝系統承受較大負荷，<strong>臨床指標異常加上多系統症狀</strong>，建議盡快進行完整代謝功能檢查，並與醫療團隊討論個人化改善計畫。若同時有自律神經失調診斷，代謝與神經系統的雙向影響值得一併評估。';
+    tags = ['安排抽血檢查', '腰圍體脂評估', '功能醫學諮詢', '胰島素阻抗測試', 'PCOS相關評估'];
+  } else if (clinicalCount >= 1 || score >= 19) {
+    title = '⚠️ 中度代謝失衡';
+    text = '你的代謝系統正在發出明顯警訊。<strong>胰島素敏感性、荷爾蒙平衡與腸道屏障</strong>可能同時受到影響，建議搭配專業諮詢與針對性的營養介入。' + (clinicalCount >= 1 ? '<br><br>💡 你已勾選臨床指標，即使總分不高，確診疾病本身即代表代謝系統正承受真實負荷，建議積極追蹤。' : '');
+    tags = ['諮詢功能醫學', '腸道修復計畫', '抗發炎飲食', '壓力管理', '肌力訓練'];
+  } else if (score <= 8) {
+    title = '✨ 代謝狀態良好';
+    text = '目前你的代謝信號相對穩定。保持規律作息、均衡飲食與適度運動，是維護代謝力的最佳策略。';
+    tags = ['維持規律運動', '睡眠充足', '減少精製糖'];
+  } else {
+    title = '⚡ 輕度代謝壓力';
+    text = '你已出現數項代謝壓力訊號。<strong>血糖波動與腸道健康</strong>可能是主要需要關注的方向，建議從飲食結構與作息開始調整。';
+    tags = ['穩定血糖節律', '補充膳食纖維', '規律睡眠', '減少精製澱粉'];
+  }
+
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultText').innerHTML = text;
+  const sugEl = document.getElementById('suggestions');
+  sugEl.innerHTML = tags.map(t => `<span class="suggestion-tag">${t}</span>`).join('');
+}
+
+function resetAll() {
+  document.querySelectorAll('.check-item').forEach(el => el.classList.remove('checked'));
+  totalScore = 0;
+  Object.keys(sectionCounts).forEach(k => sectionCounts[k] = 0);
+  updateScore();
+  updateSectionCounts();
+  document.getElementById('resultPanel').classList.remove('visible');
+}
+</script>
+</body>
+</html>
